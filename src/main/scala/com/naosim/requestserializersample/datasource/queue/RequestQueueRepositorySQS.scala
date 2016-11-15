@@ -20,4 +20,8 @@ class RequestQueueRepositorySQS extends RequestQueueRepository{
       None
     }
   }
+
+  override def remove(requestId: RequestId): Unit = {
+    queue.dequeueFirst(r => r == requestId)
+  }
 }
