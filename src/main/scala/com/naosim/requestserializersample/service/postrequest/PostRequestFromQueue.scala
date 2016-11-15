@@ -5,17 +5,27 @@ import com.naosim.requestserializersample.domain.outerresource.{OuterResourceRep
 import com.naosim.requestserializersample.domain.queue.RequestQueueRepository
 import com.naosim.requestserializersample.domain.requestclient._
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.stereotype.Component
 
-@Autowired
+@Component
 class PostRequestFromQueue @Autowired()(
                                          requestQueueRepository: RequestQueueRepository,
                                          requestClientRepository: RequestClientRepository,
                                          outerResourceRepository: OuterResourceRepository
                                        ) {
 
+
+  @Scheduled(fixedRate = 5000, initialDelay = 5000)
+  def loop(): Unit = {
+    println("do")
+    run()
+  }
+
   def run(): Unit = {
     val requestIdOption = requestQueueRepository.dequeue()
     if(requestIdOption.isEmpty) {
+      println("queue is empty")
       return // キューが空なので何もしない
     }
 
@@ -35,6 +45,7 @@ class PostRequestFromQueue @Autowired()(
   }
 
   def onError(requestId: RequestId, getRequestNgReason: GetRequestNgReason): Unit = {
+    println("error: " + getRequestNgReason.getClass.getSimpleName)
     getRequestNgReason match {
       case ALREADY_FINISHED => requestQueueRepository.remove(requestId)
       case NOT_EXIST        => requestQueueRepository.enqueue(requestId)

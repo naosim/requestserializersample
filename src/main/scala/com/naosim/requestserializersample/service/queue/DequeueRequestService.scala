@@ -1,4 +1,4 @@
-package com.naosim.requestserializersample.service.enqueue
+package com.naosim.requestserializersample.service.queue
 
 import com.naosim.requestserializersample.domain.RequestId
 import com.naosim.requestserializersample.domain.queue.RequestQueueRepository
