@@ -3,6 +3,7 @@ package com.naosim.requestserializersample.service.postrequest
 import com.naosim.requestserializersample.domain.RequestId
 import com.naosim.requestserializersample.domain.outerresource.{OuterResourceRepository, Request}
 import com.naosim.requestserializersample.domain.queue.RequestQueueRepository
+import com.naosim.requestserializersample.domain.requestclient.GetRequestNgReason.{ALREADY_FINISHED, DO_LATER, NOT_EXIST}
 import com.naosim.requestserializersample.domain.requestclient._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
