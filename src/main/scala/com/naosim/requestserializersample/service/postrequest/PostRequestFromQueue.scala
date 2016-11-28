@@ -17,21 +17,20 @@ class PostRequestFromQueue @Autowired()(
                                        ) {
 
 
-  @Scheduled(fixedRate = 5000, initialDelay = 5000)
+  @Scheduled(fixedRate = 1000, initialDelay = 5000)
   def loop(): Unit = {
-    println("do")
     run()
   }
 
+  // 1件だけ処理する
   def run(): Unit = {
     val requestIdOption = requestQueueRepository.dequeue()
     if(requestIdOption.isEmpty) {
-      println("queue is empty")
       return // キューが空なので何もしない
     }
 
     val requestId = requestIdOption.get
-    val request = requestClientRepository.getRequest(requestId)
+    val request: Either[GetRequestNgReason, Request] = requestClientRepository.getRequest(requestId)
 
     request match {
       case Left(ngReason) => onError(requestId, ngReason)
@@ -39,9 +38,10 @@ class PostRequestFromQueue @Autowired()(
     }
   }
 
+  // 送信
   def onExecute(requestId: RequestId, request: Request): Unit = {
     val response = outerResourceRepository.execute(request)
-    requestClientRepository.sendResponse(response)
+    requestClientRepository.sendResponse(requestId, response)
     requestQueueRepository.remove(requestId)
   }
 

@@ -6,4 +6,5 @@ trait RequestQueueRepository {
   def enqueue(requestId: RequestId)
   def dequeue(): Option[RequestId]
   def remove(requestId: RequestId)
+  def count(): Int
 }

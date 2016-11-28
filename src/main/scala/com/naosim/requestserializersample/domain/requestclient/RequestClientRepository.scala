@@ -5,5 +5,5 @@ import com.naosim.requestserializersample.domain.outerresource.{Request, Respons
 
 trait RequestClientRepository {
   def getRequest(requestId: RequestId):Either[GetRequestNgReason, Request]
-  def sendResponse(response: Response)
+  def sendResponse(requestId: RequestId, response: Response)
 }

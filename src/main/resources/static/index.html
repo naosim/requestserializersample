@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<meta charset="utf-8"/>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+
+<div style="position:fixed">
+<button id="sendButton">send</button>
+<button id="laterButton">swichlater</button>
+</div>
+
+
+<h2 style="padding-top: 40px">サービス提供側リクエスト状況</h2>
+<div id="queuecount"></div>
+<div id="table"></div>
+<script>
+document.querySelector('#sendButton').addEventListener('click', () => {
+    $.ajax({
+      type: "GET",
+      url: "/request",
+      contentType: 'application/json', // リクエストの Content-Type
+      dataType: "text"
+    });
+})
+
+document.querySelector('#laterButton').addEventListener('click', () => {
+    $.ajax({
+      type: "GET",
+      url: "/swich",
+      contentType: 'application/json', // リクエストの Content-Type
+      dataType: "text"
+    });
+})
+
+var queuecount = document.querySelector('#queuecount');
+var table = document.querySelector('#table');
+setInterval(()=>{
+    $.ajax({
+      type: "GET",
+      url: "/queuesize",
+      contentType: 'application/json', // リクエストの Content-Type
+      dataType: "json",
+      success: (data) => {
+        var text = '' + data.count + ': ';
+        for(var i = 0; i < data.count; i++) {
+            text += '■';
+        }
+        queuecount.innerHTML = text;
+      }
+    });
+
+
+    $.ajax({
+      type: "GET",
+      url: "/table",
+      contentType: 'application/json', // リクエストの Content-Type
+      dataType: "json",
+      success: (data) => {
+        var html = data.sort((a, b) => parseInt(a[0]) - parseInt(b[0])).map(line => `${line[0]} ${line[1]}`).join('<br>')
+        console.log(html);
+        table.innerHTML = html;
+      }
+    });
+},300);
+
+</script>
